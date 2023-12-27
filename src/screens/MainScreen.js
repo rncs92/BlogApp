@@ -9,25 +9,32 @@ import {
 import { Context } from "../context/BlogContext";
 import { EvilIcons } from "@expo/vector-icons";
 
-const MainScreen = () => {
-  const { state, addBlogPost } = useContext(Context);
+const MainScreen = ({ navigation }) => {
+  const { state, deleteBlogPost } = useContext(Context);
 
   return (
     <View>
-      <TouchableOpacity style={styles.button} onPress={addBlogPost}>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => navigation.navigate("Create")}
+      >
         <Text>Add Blog Post</Text>
       </TouchableOpacity>
       <FlatList
         data={state}
-        keyExtractor={(post) => post.title}
+        keyExtractor={(post) => post.id}
         renderItem={({ item }) => {
           return (
-            <View style={styles.row}>
-              <Text style={styles.title}>{item.title}</Text>
-              <TouchableOpacity>
-                <EvilIcons style={styles.icon} name="trash" />
-              </TouchableOpacity>
-            </View>
+            <TouchableOpacity
+              onPress={() => navigation.navigate("Show", { id: item.id })}
+            >
+              <View style={styles.row}>
+                <Text style={styles.title}>{item.title}</Text>
+                <TouchableOpacity onPress={() => deleteBlogPost(item.id)}>
+                  <EvilIcons style={styles.icon} name="trash" />
+                </TouchableOpacity>
+              </View>
+            </TouchableOpacity>
           );
         }}
       />
@@ -50,6 +57,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingVertical: 8,
     marginVertical: 5,
+    marginHorizontal: 10,
     borderTopWidth: 1,
     borderColor: "gray",
   },
